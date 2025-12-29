@@ -40,20 +40,23 @@
 - name: Add members to the Universal group, preserving existing membership
   microsoft.ad.group:
     name: "{{ item.key }}"
-    members: "{{ item.value.members }}"
+    members:
+      add: "{{ item.value.members | default(omit) }}"
   with_dict: "{{ ad_groups['universal'] }}"
   when: ad_groups['universal'] is defined and item.value.members is defined
 
 - name: Add members to the Global group, preserving existing membership
   microsoft.ad.group:
     name: "{{ item.key }}"
-    members: "{{ item.value.members }}"
+    members:
+      add: "{{ item.value.members | default(omit) }}"
   with_dict: "{{ ad_groups['global'] }}"
   when: ad_groups['global'] is defined and item.value.members is defined
 
 - name: Add members to the Domainlocal group, preserving existing membership
   microsoft.ad.group:
     name: "{{ item.key }}"
-    members: "{{ item.value.members }}"
+    members:
+      add: "{{ item.value.members | default(omit) }}"
   with_dict: "{{ ad_groups['domainlocal'] }}"
   when: ad_groups['domainlocal'] is defined and item.value.members is defined

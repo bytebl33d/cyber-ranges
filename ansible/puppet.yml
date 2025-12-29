@@ -1,0 +1,44 @@
+---
+# Load datas
+- import_playbook: data.yml
+  vars:
+    data_path: "../ad/{{domain_name}}/data/"
+  tags: 'data'
+
+- name: "Puppet: Install Puppet Server"
+  hosts: puppet_master
+  become: true
+  vars:
+    domain: "{{lab.hosts[dict_key].domain}}"
+    ansible_user: debian
+    ansible_become_password: debian
+  roles:
+    - role: puppet/linux/puppet_master
+
+# puppet agents
+- name: "Puppet: Install Agents"
+  hosts: all:!puppet_master
+  vars:
+    domain: "{{lab.hosts[dict_key].domain}}"
+    puppet_master_ip: "{{ hostvars[groups['puppet_master'][0]]['ansible_host'] }}"
+    puppet: "{{ lab.hosts[dict_key].puppet | default({}) }}"
+  tasks:
+    # Linux Path
+    - name: Run Linux Agent Role
+      include_role:
+        name: puppet/linux/puppet_agent
+      when: ansible_os_family != "Windows"
+
+    # Windows Path
+    - name: Run Windows Agent Role
+      include_role:
+        name: puppet/windows/puppet_agent
+      when: ansible_os_family == "Windows"
+
+- name: "Puppet: Finalize Certificate Signing"
+  hosts: puppet_master
+  become: true
+  tasks:
+    - name: Sign all waiting certificates
+      shell: "/opt/puppetlabs/bin/puppetserver ca sign --all"
+      failed_when: false

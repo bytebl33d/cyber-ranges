@@ -1,0 +1,35 @@
+---
+- name: Download Puppet 8 Release package
+  get_url:
+    url: "https://apt.puppet.com/puppet8-release-{{ ansible_distribution_release }}.deb"
+    dest: "/tmp/puppet.deb"
+
+- name: Install Puppet Repository
+  apt:
+    deb: "/tmp/puppet.deb"
+
+- name: Install Puppet Agent
+  apt:
+    name: puppet-agent
+    state: present
+    update_cache: yes
+
+- name: Configure Puppet Master server in puppet.conf
+  lineinfile:
+    path: /etc/puppetlabs/puppet/puppet.conf
+    line: "server = {{ puppet_master_ip }}"
+    insertafter: '\[main\]'
+    state: present
+
+- name: Start and enable Puppet Agent service
+  systemd:
+    name: puppet
+    state: started
+    enabled: yes
+
+- name: Run Puppet Agent for the first time to generate CSR
+  command: /opt/puppetlabs/bin/puppet agent --test
+  register: agent_output
+  failed_when: false # It will "fail" because the cert isn't signed yet
+  changed_when: true
+

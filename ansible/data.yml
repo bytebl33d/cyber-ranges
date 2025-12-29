@@ -1,6 +1,6 @@
 ---
 - name: "Read data files"
-  hosts: domain:extensions
+  hosts: all
   connection: local
   vars_files:
     - "{{data_path}}/config.json"

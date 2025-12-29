@@ -47,7 +47,7 @@
 - include_tasks: perm.yml
   vars:
     path: "{{item.value.path}}"
-    users: "{{ item.value.deny | split(',') |trim | default([])  }}"
+    users: "{{ (item.value.deny | default('')).split(',') | map('trim') | list }}"
     perm: "Read,Write,Modify,FullControl,Delete"
     type: "deny"
   with_dict: "{{ vulns_vars }}"

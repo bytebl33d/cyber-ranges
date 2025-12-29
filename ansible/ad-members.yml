@@ -23,3 +23,23 @@
     member_domain: "{{lab.hosts[dict_key].domain}}"
     domain_username: "{{admin_user}}@{{member_domain}}"
     domain_password: "{{lab.domains[member_domain].domain_password}}"
+
+- name: "play linux servers AD configuration"
+  hosts: linux_server
+  become: true
+  become_method: sudo
+  roles:
+    - { role: 'linux/add_linux_to_domain', tags: 'linux_server'}
+  vars:
+    sudoers_group:
+      - "Domain\\ Admins"
+    ssh_group:
+      - "Domain\\ Users"
+    domain: "{{lab.hosts[dict_key].domain}}"
+    dc_name: "{{lab.domains[domain].dc}}"
+    dc_fqdn: "{{dc_name}}.{{domain}}"
+    hostname: "{{lab.hosts[dict_key].hostname}}"
+    dc_ip: "{{ hostvars[dc_name]['ansible_host'] }}"
+    domain_username: "{{admin_user}}"
+    domain_password: "{{lab.domains[domain].domain_password}}"
+

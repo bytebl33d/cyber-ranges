@@ -1,0 +1,5 @@
+---
+- name: Restart Puppetserver
+  systemd:
+    name: puppetserver
+    state: restarted

@@ -139,7 +139,7 @@
       Import-Module ActiveDirectory
       Set-Location AD:
       $aclValues = 'AccessSystemSecurity', 'CreateChild', 'Delete', 'DeleteChild', 'DeleteTree', 'ExtendedRight', 'GenericAll', 'GenericExecute', 'GenericRead', 'GenericWrite', 'ListChildren', 'ListObject', 'ReadControl', 'ReadProperty', 'Self', 'Synchronize', 'WriteDacl', 'WriteOwner', 'WriteProperty'
-      $aclExtendValues = 'Ext-User-Force-Change-Password', 'Ext-Self-Self-Membership', 'Ext-Write-Self-Membership', 'Ext-ManageCA'
+      $aclExtendValues = 'Ext-User-Force-Change-Password', 'Ext-Self-Self-Membership', 'Ext-Write-Self-Membership', 'Ext-ManageCA', 'Ext-AllowedToAct'
       if ($for.StartsWith("NT AUTHORITY")) {
         $forSID = New-Object System.Security.Principal.NTAccount "$for"
       } else {
@@ -173,6 +173,7 @@
         "Ext-Write-Self-Membership" = @("WriteProperty","bf9679c0-0de6-11d0-a285-00aa003049e2")
         "Ext-Self-Self-Membership" = @("Self","bf9679c0-0de6-11d0-a285-00aa003049e2")
         "Ext-ManageCA" = @("ExtendedRight","18e470eb-9b98-47c5-896e-146c5c77100d")
+        "Ext-AllowedToAct" = @("WriteProperty",  "3f78c3e5-f79a-46bd-a0b8-9d18116ddc79")
       }
 
       $Ansible.Changed = $false

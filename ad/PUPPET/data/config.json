@@ -1,0 +1,205 @@
+{
+"lab" : {
+    "hosts" : {
+        "dc01" : {
+            "hostname" : "dc01",
+            "type" : "dc",
+            "local_admin_password": "8dCT-6546541qsdDJjgScp",
+            "domain" : "puppet.lab",
+            "path" : "DC=puppet,DC=lab",
+            "puppet": {
+                "install": true,
+                "service_account": {
+                    "user": "svc_puppet_win_t0",
+                    "password": "Pupp3tS3rv!ceWinT0"
+                }
+            },
+            "vulns" : ["administrator_folder","directory","files","shares"],
+            "vulns_vars" : {
+                "directory": {
+                    "setup": "c:\\setup",
+                    "ssh": "c:\\IT\\.ssh"
+                },
+                "files" : {
+                    "flag":{
+                        "src" : "flags/dc.txt",
+                        "dest": "c:\\users\\administrator\\desktop\\flag.txt"
+                    },
+                    "ssh":{
+                        "src" : "ssh/id_ed25519",
+                        "dest": "c:\\IT\\.ssh\\ed25519"
+                    }
+                },
+                "shares" : {
+                    "IT" : {
+                        "path"   : "C:\\IT",
+                        "list"   : "yes",
+                        "full"   : "PUPPET\\admins_t0",
+                        "change" : "PUPPET\\admins_t1",
+                        "read"   : "PUPPET\\admins_t1",
+                        "deny"   : "PUPPET\\Guest"
+                    }
+                }
+            }
+        },
+        "file01" : {
+            "hostname" : "file01",
+            "type" : "server",
+            "local_admin_password": "EaqsdP+xh7sdfzaRk6j90",
+            "domain" : "puppet.lab",
+            "use_laps": false,
+            "path" : "DC=puppet,DC=lab",
+            "puppet": {
+                "install": true,
+                "service_account": {
+                    "user": "svc_puppet_win_t1",
+                    "password": "Pupp3tS3rv!ceWinT1"
+                }
+            },
+            "vulns" : ["administrator_folder","files","shares","schedule"],
+            "vulns_vars" : {
+                "files" : {
+                    "beacon":{
+                        "src" : "bot.ps1",
+                        "dest" : "c:\\tmp\\bot.ps1"
+                    },
+                    "flag":{
+                        "src" : "flags/file.txt",
+                        "dest": "c:\\users\\administrator\\desktop\\flag.txt"
+                    }
+                },
+                "shares" : {
+                    "Files" : {
+                        "path"   : "C:\\Files",
+                        "list"   : "yes",
+                        "full"   : "PUPPET\\admins_t0",
+                        "change" : "PUPPET\\bruce.smith",
+                        "read"   : "PUPPET\\bruce.smith",
+                        "deny"   : "PUPPET\\Guest"
+                    }
+                },
+                "schedule": {
+                    "bot": {
+                        "name": "sliver_bot",
+                        "cmd" : "powershell c:\\tmp\\bot.ps1",
+                        "interval" : "PT10M"
+                    }
+                }
+            }
+        },
+        "pm01" : {
+            "hostname" : "pm01",
+            "type" : "linux_server",
+            "domain" : "puppet.lab",
+            "path" : "DC=puppet,DC=lab",
+            "vulns": ["directory", "ftp", "files", "sudo"],
+	    "vulns_vars": {
+                "directory": {
+                    "user_ssh": { "path": "/home/svc_puppet_lin_t1/.ssh", "owner": "svc_puppet_lin_t1" }
+                },
+	        "ftp": {
+	            "ftp_root": "/srv/ftp"
+	        },
+                "files" : {
+                    "flag":{
+                        "src" : "flags/pm.txt",
+                        "dest": "/root/root.txt"
+                    },
+                    "ssh_pub":{
+                        "src": "ssh/id_ed25519.pub",
+                        "dest": "/home/svc_puppet_lin_t1/.ssh/authorized_keys",
+                        "owner": "svc_puppet_lin_t1"
+                    }
+                },
+		"sudo": {
+                    "sudo_user": "svc_puppet_lin_t1",
+                    "binary_path": "/opt/puppetlabs/bin/puppet"
+                }
+	    }
+        }
+    },
+    "domains" : {
+        "puppet.lab" : {
+            "dc": "dc01",
+            "domain_password" : "8dCT-6546541qsdDJjgScp",
+            "netbios_name": "PUPPET",
+            "organisation_units" : {
+                "employees" : { "path" : "DC=puppet,DC=lab"},
+                "services" : { "path" : "DC=puppet,DC=lab"}
+            },
+            "groups" : {
+                "universal" : {},
+                "global" : {
+                    "employees" : {
+                        "path" : "CN=Users,DC=puppet,DC=lab"
+                    },
+                    "admins_t0" : {
+                        "path" : "CN=Users,DC=puppet,DC=lab"
+                    },
+                    "admins_t1" : {
+                        "path" : "CN=Users,DC=puppet,DC=lab"
+                    },
+                    "Domain Admins": {
+                        "managed_by" : "Administrator",
+                        "path" : "CN=Users,DC=puppet,DC=lab",
+                        "members" : ["PUPPET\\admins_t0"]
+                    }
+                }
+            },
+            "acls" : {
+                "WriteAccountRestrictions_bruce_file01" : {"for": "bruce.smith", "to": "file01$", "right": "Ext-AllowedToAct", "inheritance": "None"},
+            },
+            "users" : {
+                "alice.johnson" : {
+                    "firstname"   : "Alice",
+                    "surname"     : "johnson",
+                    "password"    : "Ih@teC0mputeRs",
+                    "description" : "",
+                    "groups"      : ["Employees"],
+                    "path"        : "OU=Employees,DC=puppet,DC=lab"
+                },
+                "bruce.smith" : {
+                    "firstname"   : "Bruce",
+                    "surname"     : "smith",
+                    "password"    : "Legend4_ryS4n1nFTW",
+                    "description" : "",
+                    "groups"      : ["Employees"],
+                    "path"        : "OU=Employees,DC=puppet,DC=lab"
+                },
+                "david.wilson" : {
+                    "firstname"   : "david",
+                    "surname"     : "wilson",
+                    "password"    : "Sh@r1ngAnnFTW",
+                    "description" : "",
+                    "groups"      : ["Employees"],
+                    "path"        : "OU=Employees,DC=puppet,DC=lab"
+                },
+                "svc_puppet_lin_t1" : {
+                    "firstname"   : "",
+                    "surname"     : "",
+                    "password"    : "Pupp3tS3rv!ceLNX",
+                    "description" : "",
+                    "groups"      : ["admins_t1"],
+                    "path"        : "OU=Services,DC=puppet,DC=lab"
+                },
+                "svc_puppet_win_t1" : {
+                    "firstname"   : "",
+                    "surname"     : "",
+                    "password"    : "Pupp3tS3rv!ceWinT1",
+                    "description" : "",
+                    "groups"      : ["admins_t1"],
+                    "path"        : "OU=Services,DC=puppet,DC=lab"
+                },
+                "svc_puppet_win_t0" : {
+                    "firstname"   : "",
+                    "surname"     : "",
+                    "password"    : "Pupp3tS3rv!ceWinT0",
+                    "description" : "",
+                    "groups"      : ["admins_t0"],
+                    "path"        : "OU=Services,DC=puppet,DC=lab"
+                }
+            }
+        }
+    }
+}
+}

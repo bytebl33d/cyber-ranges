@@ -6,7 +6,7 @@
   tags: 'data'
 
 - name: "Setup vulnerabilities with tasks"
-  hosts: domain
+  hosts: domain,linux
   tasks:
     - include_role:
         name: "vulns/{{vuln}}"

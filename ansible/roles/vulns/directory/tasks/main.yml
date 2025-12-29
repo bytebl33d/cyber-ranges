@@ -1,5 +1,16 @@
-- name: Create directory
+- name: Create linux directory
+  ansible.builtin.file:
+    path: "{{ item.value.path }}"
+    state: directory
+    owner: "{{ item.value.owner }}"
+    mode: '0755'
+  with_dict: "{{ vulns_vars }}"
+  become: yes
+  when: ansible_os_family != "Windows"
+
+- name: Create windows directory
   ansible.windows.win_file:
-    path: "{{item.value}}"
+    path: "{{ item.value }}"
     state: directory
   with_dict: "{{ vulns_vars }}"
+  when: ansible_os_family == "Windows"

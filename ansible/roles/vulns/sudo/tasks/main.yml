@@ -1,0 +1,27 @@
+- name: Ensure sudoers.d directory exists
+  ansible.builtin.file:
+    path: /etc/sudoers.d
+    state: directory
+    mode: '0750'
+  become: yes
+
+- name: Ensure local user exists
+  ansible.builtin.user:
+    name: "{{ vulns_vars.sudo_user }}"
+    state: present
+    shell: /bin/bash
+  become: yes
+  # Only run this if it's NOT a domain user
+  when: "'@' not in vulns_vars.sudo_user"
+
+- name: Grant sudo rights to specific user
+  ansible.builtin.lineinfile:
+    path: "/etc/sudoers.d/{{ target_user | split('@') | first }}"
+    line: "{{ target_user }} ALL=(ALL) NOPASSWD: {{ vulns_vars.binary_path }}"
+    create: yes
+    mode: '0440'
+    validate: '/usr/sbin/visudo -cf %s'
+  become: yes
+  vars:
+    target_user: "{{ vulns_vars.sudo_user | default(ad_user) }}"
+  when: ansible_os_family != "Windows"

@@ -1,0 +1,51 @@
+- name: Install vsftpd
+  apt:
+    name: vsftpd
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Configure vsftpd for Anonymous Access
+  copy:
+    dest: /etc/vsftpd.conf
+    content: |
+      listen=YES
+      listen_ipv6=NO
+      anonymous_enable=YES
+      local_enable=YES
+      write_enable=NO
+      anon_root={{ item.value }}
+      no_anon_password=YES
+      hide_ids=YES
+      pasv_min_port=40000
+      pasv_max_port=40100
+  notify: Restart vsftpd
+  with_dict: "{{ vulns_vars }}"
+  become: yes
+
+- name: Ensure FTP root directory exists and has correct permissions
+  file:
+    path: "{{ item.value }}"
+    state: directory
+    owner: ftp
+    group: ftp
+    mode: '0555' # Read and Execute only
+  become: yes
+  with_dict: "{{ vulns_vars }}"
+
+- name: Open FTP Ports in UFW
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop:
+    - '20'     # FTP Data
+    - '21'     # FTP Control
+    - '40000:40100' # Passive Ports
+  become: yes
+
+- name: Ensure vsftpd is started and enabled
+  systemd:
+    name: vsftpd
+    state: started
+    enabled: yes

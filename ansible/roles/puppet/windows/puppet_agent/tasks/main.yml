@@ -1,0 +1,47 @@
+---
+- name: Map puppet master IP to name in Windows hosts file
+  win_hosts:
+    state: present
+    canonical_name: puppet
+    ip_address: "{{ puppet_master_ip }}"
+
+- name: Install Puppet Agent via MSI
+  win_package:
+    path: https://downloads.puppet.com/windows/puppet8/puppet-agent-x64-latest.msi
+    product_id: '{96F98E16-953B-49E4-9721-789718E06A2E}'
+    arguments:
+      - /qn
+      - /norestart
+      - "PUPPET_MASTER_SERVER=puppet"
+      - "PUPPET_AGENT_ACCOUNT_USER={{ puppet.service_account.user | default('LocalSystem') }}"
+      - "PUPPET_AGENT_ACCOUNT_PASSWORD={{ puppet.service_account.password | default('') }}"
+      - "PUPPET_AGENT_ACCOUNT_DOMAIN={{ domain.split('.')[0] | upper }}"
+    state: present
+  register: puppet_install_result
+
+- name: Show MSI Result
+  ansible.builtin.debug:
+    var: puppet_install_result
+
+- name: Configure Puppet Agent to use the name 'puppet'
+  win_shell: |
+    puppet config set server puppet --section main
+  register: config_result
+
+- name: Ensure Puppet service is running
+  win_service:
+    name: puppet
+    start_mode: auto
+    state: started
+
+- name: Trigger initial Puppet agent check-in
+  win_shell: 'puppet agent --test'
+  register: win_agent_test
+  # The first run always "fails" (rc 1) because the cert isn't signed yet. 
+  # We use failed_when: false to prevent the playbook from stopping.
+  failed_when: false
+  changed_when: true
+
+- name: Debug Agent Output
+  debug:
+    msg: "Agent sent CSR. Check Master for pending certs."

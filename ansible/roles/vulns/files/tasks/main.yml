@@ -1,5 +1,17 @@
-- name: Copy a single file
-  ansible.windows.win_copy:
-    src: "../ad/{{domain_name}}/files/{{item.value.src}}"
-    dest: "{{item.value.dest}}"
+- name: "Copy a single file to linux directory"
+  ansible.builtin.copy:
+    src: "../ad/{{ domain_name }}/files/{{ item.value.src }}"
+    dest: "{{ item.value.dest }}"
+    owner: "{{ item.value.owner | default('root') }}"
+    group: "root"
+    mode: '0700'
   with_dict: "{{ vulns_vars }}"
+  become: yes
+  when: ansible_os_family != "Windows"
+
+- name: "Copy a single file to windows directory"
+  ansible.windows.win_copy:
+    src: "../ad/{{ domain_name }}/files/{{ item.value.src }}"
+    dest: "{{ item.value.dest }}"
+  with_dict: "{{ vulns_vars }}"
+  when: ansible_os_family == "Windows"

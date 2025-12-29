@@ -1,0 +1,60 @@
+---
+- name: Initialize Puppet CA
+  command: /opt/puppetlabs/bin/puppetserver ca setup
+  args:
+    creates: /etc/puppetlabs/puppetserver/ca/ca_crt.pem
+  register: ca_setup_res
+  failed_when: false
+
+- name: Download Puppet 8 Release package
+  get_url:
+    url: "https://apt.puppet.com/puppet8-release-{{ ansible_distribution_release }}.deb"
+    dest: "/tmp/puppet.deb"
+
+- name: Install Puppet Repository
+  apt:
+    deb: "/tmp/puppet.deb"
+
+- name: Install Puppet Server package
+  apt:
+    name: puppetserver
+    state: present
+    update_cache: yes
+
+- name: Tune PuppetServer memory (The Simple Way)
+  lineinfile:
+    path: /etc/default/puppetserver
+    regexp: '^JAVA_ARGS='
+    line: 'JAVA_ARGS="-Xms512m -Xmx512m -Djruby.logger.class=com.puppetlabs.chartreuse.Chainsaw"'
+  notify: Restart Puppetserver
+
+- name: Ensure Puppet Server is started and enabled
+  systemd:
+    name: puppetserver
+    state: started
+    enabled: yes
+
+- name: Install UFW
+  apt:
+    name: ufw
+    state: present
+
+- name: Open Puppet Server Port (8140)
+  ufw:
+    rule: allow
+    port: '8140'
+    proto: tcp
+  when: ansible_os_family == "Debian"
+
+- name: Ensure the puppet hostname resolves to localhost on the Master
+  lineinfile:
+    path: /etc/hosts
+    line: "127.0.0.1 localhost puppet {{ inventory_hostname }}"
+    state: present
+
+- name: Configure puppet.conf to use the correct certname
+  ini_file:
+    path: /etc/puppetlabs/puppet/puppet.conf
+    section: main
+    option: certname
+    value: "{{ inventory_hostname }}.{{ domain }}"

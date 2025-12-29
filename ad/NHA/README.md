@@ -10,7 +10,7 @@ The ansible playbooks are rewritten to support Windows Server 2025.
 ## Setup
 
 ```bash
-$ git clone http://192.168.128.11:3000/serpent/ludus-ranges
+$ git clone https://github.com/bytebl33d/ludus-ranges.git
 $ cd ludus-ranges/NHA
 ```
 
@@ -34,8 +34,8 @@ $ ludus range deploy --user NHA
 Change the workspace inventory to reflect the correct IP addresses and run the ansible playbooks:
 
 ```bash
-# change inventory IPs
-$ vi workspace/inventory
+# change ip_range in config
+$ vi ad/NHA/providers/ludus/inventory
 
 # install the required collections
 $ ansible-galaxy collection install ansible.windows
@@ -43,7 +43,7 @@ $ ansible-galaxy collection install community.general
 $ ansible-galaxy collection install community.windows
 
 $ cd ansible
-$ ansible-playbook -i ../ad/NHA/data/inventory -i ../workspace/inventory -i ../globalsettings.ini main.yml
+$ ansible-playbook -i ../ad/NHA/data/inventory -i ../ad/NHA/providers/ludus/inventory -i ../globalsettings.ini nha-main.yml
 ```
 
 ## Connect
@@ -51,14 +51,14 @@ $ ansible-playbook -i ../ad/NHA/data/inventory -i ../workspace/inventory -i ../g
 Optionally change the AllowedIPs to only the SRV01 host instead of the full /16 range.
 
 ```bash 
-$ ludus user wireguard --user NHAc531df | tee ludus-wg.conf
+$ ludus user wireguard --user NHA | tee ludus-wg.conf
 [Interface]
 PrivateKey = <PRIVATE_KEY>
 Address = 198.51.100.5/32
 
 [Peer]
 PublicKey = <PUBLIC_KEY>
-Endpoint = 192.168.128.10:51820
+Endpoint = 192.168.20.10:51820
 AllowedIPs = 10.5.0.0/16, 198.51.100.1/32
 PersistentKeepalive = 25
 
