@@ -59,3 +59,7 @@ PersistentKeepalive = 25
 # locally
 $ wg-quick up ./ludus-wg.conf
 ```
+
+Afterwards you should be able to enumerate the open FTP share to discover a sliver client and configuration file:
+
+![Sliver C2 Setup](/docs/img/PUPPET-sliver-client.png)
