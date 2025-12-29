@@ -82,7 +82,9 @@
                     "bot": {
                         "name": "sliver_bot",
                         "cmd" : "powershell c:\\tmp\\bot.ps1",
-                        "interval" : "PT10M"
+                        "interval" : "PT10M",
+                        "user": "PUPPET\\bruce.smith",
+                        "password": "Legend4_ryS4n1nFTW"
                     }
                 }
             }

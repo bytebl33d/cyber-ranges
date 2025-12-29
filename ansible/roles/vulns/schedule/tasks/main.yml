@@ -13,5 +13,9 @@
     - type: boot
       repetition:
         interval: "{{item.value.interval}}"
-    username: SYSTEM
+    username: "{{ item.value.user | default('SYSTEM') }}"
+    password: "{{ item.value.password | default(omit) }}"
+    logon_type: "{{ item.value.user is defined | ternary('password', 'service_account') }}"
+    state: present
+    enabled: yes
   with_dict: "{{ vulns_vars }}"
