@@ -56,6 +56,9 @@
                     "password": "Pupp3tS3rv!ceWinT1"
                 }
             },
+            "scripts" : [
+                "Set-UserRights.ps1 -AddRight -Username PUPPET\\bruce.smith -UserRight SeBatchLogonRight"
+            ],
             "vulns" : ["administrator_folder","files","shares","schedule"],
             "vulns_vars" : {
                 "files" : {

