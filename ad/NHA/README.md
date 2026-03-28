@@ -10,23 +10,23 @@ The ansible playbooks are rewritten to support Windows Server 2025.
 ## Setup
 
 ```bash
-$ git clone https://github.com/bytebl33d/ludus-ranges.git
-$ cd ludus-ranges/NHA
+git clone https://github.com/bytebl33d/ludus-ranges.git
+cd ludus-ranges/NHA
 ```
 
 ### (Optionally) Create a new user
 
-```
-$ ludus user add --name Ninja --userid NHA --url https://127.0.0.1:8081
+```bash
+ludus user add --name Ninja --userid NHA --url https://127.0.0.1:8081
 ```
 
 ### Range deployment
 
 ```bash
-$ ludus templates build -n win2025-server-x64-tpm-template
-$ ludus templates build -n win2022-server-x64-template
-$ ludus range config set -f ad/NHA/providers/ludus/config.yml --user NHA
-$ ludus range deploy --user NHA
+ludus templates build -n win2025-server-x64-tpm-template
+ludus templates build -n win2022-server-x64-template
+ludus range config set -f ad/NHA/providers/ludus/config.yml --user NHA
+ludus range deploy --user NHA
 ```
 
 ### Ansible Provisioning
@@ -50,7 +50,7 @@ $ ansible-playbook -i ../ad/NHA/data/inventory -i ../ad/NHA/providers/ludus/inve
 
 Optionally change the AllowedIPs to only the SRV01 host instead of the full /16 range.
 
-```bash 
+```bash
 $ ludus user wireguard --user NHA | tee ludus-wg.conf
 [Interface]
 PrivateKey = <PRIVATE_KEY>

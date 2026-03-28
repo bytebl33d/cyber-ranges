@@ -1,0 +1,37 @@
+#cloud-config
+autoinstall:
+  version: 1
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+
+  network:
+    ethernets:
+      ens160:
+        dhcp4: yes
+    version: 2
+
+  storage:
+    layout:
+      name: direct
+
+  identity:
+    hostname: ubuntu
+    username: sysadmin
+    # openssl passwd -6 'MyStr0ng!Pass'
+    password: "$6$h1lTFAoOohicFs9j$ptrgucHTCQKc/xGQqXcKYUIiZaLqFvtRqlWC8VIhM1YTDSoC33GkPOq5zbGEU/m0FjLOOw.x6lBbGAEUeYkyN1"
+
+  ssh:
+    install-server: true
+    allow-pw: true
+
+  packages:
+    - openssh-server
+    - curl
+    - wget
+  
+  updates: security
+
+  late-commands:
+    - echo 'sysadmin ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/sysadmin
+    - chmod 440 /target/etc/sudoers.d/sysadmin

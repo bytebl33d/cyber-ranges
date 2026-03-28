@@ -1,0 +1,91 @@
+{
+"lab" : {
+    "hosts" : {
+        "dc01" : {
+            "hostname" : "dc01",
+            "type" : "dc",
+            "local_admin_password": "8dCT-6546541qsdDJjgScp",
+            "domain" : "example.lab",
+            "path" : "DC=example,DC=lab",
+            "vulns" : ["administrator_folder","directory","files","shares"],
+            "vulns_vars" : {
+                "directory": {
+                    "setup": "c:\\setup"
+                },
+                "files" : {
+                    "flag":{
+                        "src" : "flags/dc.txt",
+                        "dest": "c:\\users\\administrator\\desktop\\flag.txt"
+                    }
+                },
+                "shares" : {
+                    "IT" : {
+                        "path"   : "C:\\IT",
+                        "list"   : "yes",
+                        "full"   : "EXAMPLE\\admins_t0",
+                        "change" : "EXAMPLE\\admins_t1",
+                        "read"   : "EXAMPLE\\admins_t1",
+                        "deny"   : "EXAMPLE\\Guest"
+                    }
+                }
+            }
+        }
+    },
+    "domains" : {
+        "example.lab" : {
+            "dc": "dc01",
+            "domain_password" : "8dCT-6546541qsdDJjgScp",
+            "netbios_name": "EXAMPLE",
+            "organisation_units" : {
+                "employees" : { "path" : "DC=example,DC=lab"},
+                "services" : { "path" : "DC=example,DC=lab"}
+            },
+            "groups" : {
+                "universal" : {},
+                "global" : {
+                    "employees" : {
+                        "path" : "CN=Users,DC=example,DC=lab"
+                    },
+                    "admins_t0" : {
+                        "path" : "CN=Users,DC=example,DC=lab"
+                    },
+                    "admins_t1" : {
+                        "path" : "CN=Users,DC=example,DC=lab"
+                    },
+                    "Domain Admins": {
+                        "managed_by" : "Administrator",
+                        "path" : "CN=Users,DC=example,DC=lab",
+                        "members" : ["EXAMPLE\\admins_t0"]
+                    }
+                }
+            },
+            "users" : {
+                "alice.johnson" : {
+                    "firstname"   : "Alice",
+                    "surname"     : "Johnson",
+                    "password"    : "Ih@teC0mputeRs",
+                    "description" : "",
+                    "groups"      : ["Employees", "admins_t1"],
+                    "path"        : "OU=Employees,DC=example,DC=lab"
+                },
+                "bruce.smith" : {
+                    "firstname"   : "Bruce",
+                    "surname"     : "Smith",
+                    "password"    : "Legend4_ryS4n1nFTW",
+                    "description" : "",
+                    "groups"      : ["Employees"],
+                    "path"        : "OU=Employees,DC=example,DC=lab"
+                },
+                "david.wilson" : {
+                    "firstname"   : "David",
+                    "surname"     : "Wilson",
+                    "password"    : "Sh@r1ngAnnFTW",
+                    "description" : "",
+                    "groups"      : ["Employees"],
+                    "path"        : "OU=Employees,DC=example,DC=lab"
+                }
+            }
+        }
+    }
+}
+}

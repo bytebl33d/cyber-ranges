@@ -1,8 +1,8 @@
 [all:vars]
 ; domain_name : folder inside ad/
-domain_name=NHA
+domain_name=EXAMPLE
 ; administrator user
-admin_user=administrator
+admin_user=Administrator
 
 ;force_dns_server
 force_dns_server=no
@@ -25,23 +25,17 @@ ansible_winrm_read_timeout_sec=500
 ; usage : build.yml, ad-relations.yml, ad-servers.yml, vulnerabilities.yml
 [domain]
 dc01
-dc02
-srv01
-srv02
-srv03
 
 ; domain controler (mandatory)
 ; usage : ad-acl.yml, ad-data.yml, ad-relations.yml, laps.yml
 [dc]
 dc01
-dc02
 
 ; domain server to enroll (mandatory if you want servers)
 ; usage : ad-data.yml, ad-servers.yml, laps.yml
 [server]
-srv01
-srv02
-srv03
+
+[linux]
 
 ; workstation to enroll (mandatory if you want workstation)
 ; usage : ad-servers.yml, laps.yml
@@ -51,7 +45,6 @@ srv03
 ; usage : ad-servers.yml
 [parent_dc]
 dc01
-dc02
 
 ; child domain controler (need a fqdn child_name.parent_name)
 ; usage : ad-servers.yml
@@ -59,33 +52,26 @@ dc02
 ; external trust, need domain trust key in config (bidirectionnal)
 ; usage : ad-trusts.yml
 [trust]
-dc01
-dc02
 
 ; install adcs
 ; usage : adcs.yml
 [adcs]
-dc01
 
 ; install custom template (dc)
 ; usage : adcs.yml
 [adcs_customtemplates]
-;dc01
 
 ; install iis with default website asp upload on 80
 ; usage : servers.yml
 [iis]
-srv01
 
 ; install mssql
 ; usage : servers.yml
 [mssql]
-srv02
 
 ; install mssql gui
 ; usage : servers.yml
 [mssql_ssms]
-srv02
 
 ; install webdav 
 [webdav]
@@ -104,10 +90,6 @@ srv02
 ; usage : update.yml
 [update]
 dc01
-dc02
-srv01
-srv02
-srv03
 
 ; disable update
 ; usage : update.yml
@@ -115,11 +97,12 @@ srv03
 ; allow defender (dc or server only)
 ; usage : security.yml
 [defender_on]
-dc01
-dc02
-srv01
-srv02
-srv03
+
 ; disable defender (dc or server only)
 ; usage : security.yml
 [defender_off]
+dc01
+
+; install hyperV and make virtual switch
+[hyperv]
+dc01

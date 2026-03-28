@@ -1,0 +1,15 @@
+# Copy this file to variables.pkrvars.hcl and fill in your values.
+# Run: packer build -var-file=variables.pkrvars.hcl .
+
+iso_path     = "/path/to/iso"
+iso_checksum = "None"
+
+memory_mb    = 2048
+cpus         = 1
+disk_size_mb = 10240
+
+ssh_username = "sysadmin"
+ssh_password = "MyStr0ng!Pass"
+
+# location to store image (change this)
+output_dir = "/path/to/vmware/UBUNTU24"

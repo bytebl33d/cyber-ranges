@@ -1,0 +1,29 @@
+---
+- name: Install Hyper-V feature
+  ansible.windows.win_feature:
+    name: Hyper-V
+    state: present
+    include_management_tools: true
+  register: hyperv_install
+
+- name: Reboot after Hyper-V install
+  ansible.windows.win_reboot:
+    reboot_timeout: 300
+  when: hyperv_install.reboot_required
+
+- name: Create internal VM switch
+  ansible.windows.win_shell: |
+    if (-not (Get-VMSwitch -Name "{{ switch_name }}" -ErrorAction SilentlyContinue)) {
+      New-VMSwitch -SwitchName "{{ switch_name }}" -SwitchType Internal
+    }
+
+- name: Set IP on virtual switch adapter
+  ansible.windows.win_shell: |
+    New-NetIPAddress -IPAddress {{ switch_ip }} -PrefixLength {{ switch_prefix }} `
+      -InterfaceAlias "vEthernet ({{ switch_name }})" -ErrorAction SilentlyContinue
+
+- name: Create NAT network
+  ansible.windows.win_shell: |
+    if (-not (Get-NetNat -Name "{{ nat_name }}" -ErrorAction SilentlyContinue)) {
+      New-NetNat -Name "{{ nat_name }}" -InternalIPInterfaceAddressPrefix {{ nat_network }}
+    }

@@ -1,0 +1,8 @@
+# Packer
+packer/**/output*/
+packer/**/*.box
+packer/**/variables.pkrvars.hcl
+packer_cache/
+
+# Ansible retry files
+*.retry

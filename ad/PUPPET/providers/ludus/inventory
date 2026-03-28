@@ -9,7 +9,6 @@ file01 ansible_host={{ip_range}}.50 dns_domain=dc01 dict_key=file01
 pm01 ansible_host={{ip_range}}.200 dns_domain=dc01 dict_key=pm01
 
 [all:vars]
-ip_range=10.4.10
 force_dns_server=no
 dns_server={{ip_range}}.254
 

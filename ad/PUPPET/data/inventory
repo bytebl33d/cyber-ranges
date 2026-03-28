@@ -12,8 +12,8 @@ dns_server=1.1.1.1
 dns_server_forwarder=1.1.1.1
 
 ; winrm connection (windows)
-ansible_user=vagrant
-ansible_password=vagrant
+ansible_user=Administrator
+ansible_password=MyStr0ng!Pass
 ansible_connection=winrm
 ansible_winrm_server_cert_validation=ignore
 ansible_winrm_operation_timeout_sec=400
@@ -37,7 +37,7 @@ dc01
 [server]
 file01
 
-[linux]
+[linux_server]
 pm01
 
 ; workstation to enroll (mandatory if you want workstation)

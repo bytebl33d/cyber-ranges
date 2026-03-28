@@ -1,4 +1,5 @@
 # PUPPET
+
 Puppet is a small active directory scenario in which you start with an already running Sliver C2 beacon on an internal system. It is designed to practice operating through a C2 framework in a modern, challenging hybrid environment.
 
 You are tasked with performing a red team engagement on Puppet Inc. The company does not allow data leaving the internal network, so a c2 server has been set up internally and an employee executed a payload in order to simulate a successful social engineering attack.
@@ -6,23 +7,23 @@ You are tasked with performing a red team engagement on Puppet Inc. The company 
 ## Setup
 
 ```bash
-$ git clone https://github.com/bytebl33d/ludus-ranges.git
-$ cd ludus-ranges/NHA
+git clone https://github.com/bytebl33d/ludus-ranges.git
+cd ludus-ranges/NHA
 ```
 
 ### (Optionally) Create a new user
 
-```
-$ ludus user add --name Puppet --userid PUPPET --url https://127.0.0.1:8081
+```bash
+ludus user add --name Puppet --userid PUPPET --url https://127.0.0.1:8081
 ```
 
 ### Range deployment
 
 ```bash
-$ ludus templates build -n win2025-server-x64-tpm-template
-$ ludus templates build -n win2022-server-x64-template
-$ ludus range config set -f ad/PUPPET/providers/ludus/config.yml --user PUPPET
-$ ludus range deploy --user PUPPET
+ludus templates build -n win2025-server-x64-tpm-template
+ludus templates build -n win2022-server-x64-template
+ludus range config set -f ad/PUPPET/providers/ludus/config.yml --user PUPPET
+ludus range deploy --user PUPPET
 ```
 
 ### Ansible Provisioning
