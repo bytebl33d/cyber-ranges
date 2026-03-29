@@ -37,7 +37,14 @@ $ ludus templates list
 
 $ ludus templates add -d <TEMPLATE_DIRECTORY>
 $ ludus tamplates build -n win-2025-server-x64-tpm-template
+
+# custom templates
+$ ludus templates add -d packer/ludus/WINSRV2025
 ```
+
+> [!warning]
+> Custom ludus templates (see EXAMPLE range) in this repo require changing the default credentials (localuser:password) of ludus to work.
+> To change these credentials, edit the `ansible/range-management/group_vars/windows.yml` and disable `sysprep` in the `ludus/config.conf`.
 
 ### Range Deployment
 
@@ -73,9 +80,6 @@ $ ludus --user <USER> power on -n all
 # Packer VMWare plugin
 packer plugins install github.com/vmware/vmware
 ```
-
-> [!info]
-> You must provide your own ISOs.
 
 Change IPs and Administrator credentials or leave the default (`Administrator:MyStr0ng!Pass`).
 

@@ -4,7 +4,7 @@
         "dc01" : {
             "hostname" : "dc01",
             "type" : "dc",
-            "local_admin_password": "8dCT-6546541qsdDJjgScp",
+            "local_admin_password": "MyStr0ng!Pass",
             "domain" : "example.lab",
             "path" : "DC=example,DC=lab",
             "vulns" : ["administrator_folder","directory","files","shares"],
@@ -34,7 +34,7 @@
     "domains" : {
         "example.lab" : {
             "dc": "dc01",
-            "domain_password" : "8dCT-6546541qsdDJjgScp",
+            "domain_password" : "MyStr0ng!Pass",
             "netbios_name": "EXAMPLE",
             "organisation_units" : {
                 "employees" : { "path" : "DC=example,DC=lab"},

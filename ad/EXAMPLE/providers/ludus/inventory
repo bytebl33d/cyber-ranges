@@ -12,7 +12,5 @@ dns_server={{ip_range}}.254
 
 dns_server_forwarder={{ip_range}}.254
 
-ansible_user=localuser
-ansible_password=password
-
-
+ansible_user=Administrator
+ansible_password=MyStr0ng!Pass

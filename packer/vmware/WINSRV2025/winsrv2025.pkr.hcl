@@ -144,4 +144,15 @@ build {
       "& ([ScriptBlock]::Create((irm https://get.activated.win))) /TSforge /Z-Windows",
     ]
   }
+
+  # Apply baseline hardening (OSConfig)
+  provisioner "powershell" {
+    inline = [
+      "Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Confirm:$false",
+      "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted",
+      "Install-Module -Name Microsoft.OSConfig -Scope AllUsers -Repository PSGallery -Force -Confirm:$false",
+      "Set-OSConfigDesiredConfiguration -Scenario SecurityBaseline/WS2025/WorkgroupMember -Default",
+      "Set-OSConfigDesiredConfiguration -Scenario Defender/Antivirus -Default",
+    ]
+  }
 }

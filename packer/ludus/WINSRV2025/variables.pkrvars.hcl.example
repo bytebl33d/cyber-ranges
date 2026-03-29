@@ -1,0 +1,19 @@
+# Copy this file to variables.pkrvars.hcl and fill in your values.
+# Run: packer build -var-file=variables.pkrvars.hcl .
+
+iso_storage_pool = "local"
+
+ansible_home        = "/opt/ludus/ansible"
+ludus_nat_interface = "vmbr0"
+
+vm_name      = "winsrv2025-x64-hardened-template"
+vm_disk_size = "60G"
+vm_memory    = "4096"
+vm_cpu_cores = "2"
+
+iso_path     = "data:iso/win2025-server-x64.iso"
+iso_checksum = "sha256:2866105ea8905101f47e2d9b36c5533e0d8c3af9519e4342eddbdae755921dd7"
+
+winrm_username = "Administrator"
+winrm_password = "MyStr0ng!Pass"
+

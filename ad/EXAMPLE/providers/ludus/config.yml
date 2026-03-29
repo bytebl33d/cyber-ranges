@@ -1,13 +1,13 @@
 ludus:
   - vm_name: "{{ range_id }}-DC01"
     hostname: "{{ range_id }}-DC01"
-    template: win2025-server-x64-tpm-template
+    template: winsrv2025-x64-hardened-template
     vlan: 10
     ip_last_octet: 100
     ram_gb: 8
     cpus: 4
     windows:
-      sysprep: true
+      sysprep: false
 
 router:
   vm_name: "{{ range_id }}-router-debian12-x64"
