@@ -1,0 +1,52 @@
+- name: Create and Link GPOs (CmdletBinding Version)
+  ansible.windows.win_powershell:
+    script: |
+        param (
+            [String]$GposJson
+        )
+
+        Import-Module GroupPolicy
+        Import-Module ActiveDirectory
+
+        # Ensure we have a clean array of objects
+        $gpoData = $GposJson | ConvertFrom-Json
+        $report = @()
+
+        foreach ($gpoEntry in $gpoData) {
+            $gpoName = $gpoEntry.name
+            $links = @($gpoEntry.links)
+
+            try {
+                # Check/Create GPO
+                $gpoObj = Get-GPO -Name $gpoName -ErrorAction SilentlyContinue
+                if (!$gpoObj) {
+                    Write-Verbose "Creating GPO: $gpoName"
+                    $gpoObj = New-GPO -Name $gpoName -Comment ($gpoEntry.comment) -ErrorAction Stop
+                    $Ansible.Changed = $true
+                }
+
+                # Process each Link for THIS GPO
+                foreach ($ouDN in $links) {
+                    $ou = Get-ADOrganizationalUnit -Identity $ouDN -Properties gpLink -ErrorAction Stop
+                    
+                    if ($ou.gpLink -like "*$($gpoObj.Id)*") {
+                        $report += [PSCustomObject]@{ GPO = $gpoName; OU = $ouDN; Status = "Skipped"; Detail = "Already Linked" }
+                    } else {
+                        New-GPLink -Name $gpoName -Target $ouDN -ErrorAction Stop
+                        $report += [PSCustomObject]@{ GPO = $gpoName; OU = $ouDN; Status = "SUCCESS"; Detail = "Created and Linked" }
+                        $Ansible.Changed = $true
+                    }
+                }
+            } catch {
+                $report += [PSCustomObject]@{ GPO = $gpoName; Status = "FAILED"; Detail = $_.Exception.Message }
+            }
+        }
+
+        $Ansible.Result = $report
+    parameters:
+      GposJson: "{{ lab.domains[domain].gpos.values() | list | to_json }}"
+  register: gpo_log
+
+- name: "Display GPO Provisioning Results"
+  ansible.builtin.debug:
+    var: gpo_log.result

@@ -160,9 +160,25 @@
           $extra_args.Server = $to.Split("\")[0]
           $to = $to.Split("\")[1]
         }
-        $toObj = Get-ADObject -Filter "SamAccountName -eq '$to'" @extra_args
-        $objOU = ($toObj).DistinguishedName
-        $objAcl = get-acl -Path "$objOU"
+        # Try finding by SamAccountName (Users/Groups/Computers)
+        $toObj = Get-ADObject -Filter "SamAccountName -eq '$to'" @extra_args -ErrorAction SilentlyContinue
+        
+        # If not found, try finding a GPO by its DisplayName
+        if (-not $toObj) {
+            Import-Module GroupPolicy
+            $gpo = Get-GPO -Name $to -ErrorAction SilentlyContinue
+            if ($gpo) {
+                # Construct the GPO DistinguishedName manually
+                $domainDN = (Get-ADRootDSE).defaultNamingContext
+                $objOU = "CN={$($gpo.Id)},CN=Policies,CN=System,$domainDN"
+                $objAcl = Get-Acl -Path "AD:$objOU"
+                $objFound = $true
+            }
+        } else {
+            $objOU = $toObj.DistinguishedName
+            $objAcl = Get-Acl -Path "AD:$objOU"
+            $objFound = $true
+        }
       }
 
       $type =  [System.Security.AccessControl.AccessControlType] "Allow"
