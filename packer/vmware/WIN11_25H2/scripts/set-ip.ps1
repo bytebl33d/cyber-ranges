@@ -1,0 +1,2 @@
+New-NetIPAddress -InterfaceAlias "Ethernet0" -IPAddress 192.168.234.100 -PrefixLength 24  -DefaultGateway 192.168.234.2
+Set-DnsClientServerAddress -InterfaceAlias "Ethernet0" -ServerAddresses 127.0.0.1

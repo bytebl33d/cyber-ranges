@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<unattend xmlns="urn:schemas-microsoft-com:unattend">
+  <settings pass="windowsPE">
+    <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
+      <SetupUILanguage><UILanguage>en-GB</UILanguage></SetupUILanguage>
+      <InputLocale>en-GB</InputLocale>
+      <SystemLocale>en-GB</SystemLocale>
+      <UILanguage>en-GB</UILanguage>
+      <UserLocale>en-GB</UserLocale>
+    </component>
+
+    <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
+      <UserData>
+        <AcceptEula>true</AcceptEula>
+        <FullName>Administrator</FullName>
+        <Organization>Lab</Organization>
+        <ProductKey>
+          <Key>TVRH9-TDQGR-3DPKF-4DXGJ-Q62YB</Key>
+          <WillShowUI>Never</WillShowUI>
+        </ProductKey>
+      </UserData>
+
+      <ImageInstall>
+        <OSImage>
+          <InstallTo>
+            <DiskID>0</DiskID>
+            <PartitionID>3</PartitionID> 
+          </InstallTo>
+          <WillShowUI>OnError</WillShowUI>
+          <InstallFrom>
+            <MetaData wcm:action="add">
+                <Key>/IMAGE/INDEX</Key>
+                <Value>1</Value>
+            </MetaData>
+          </InstallFrom>
+        </OSImage>
+      </ImageInstall>
+
+      <DiskConfiguration>
+        <Disk wcm:action="add">
+            <CreatePartitions>
+              <CreatePartition wcm:action="add">
+                <Order>1</Order>
+                <Type>EFI</Type>
+                <Size>100</Size>
+              </CreatePartition>
+              <CreatePartition wcm:action="add">
+                <Order>2</Order>
+                <Type>MSR</Type>
+                <Size>16</Size>
+              </CreatePartition>
+              <CreatePartition wcm:action="add">
+                <Order>3</Order>
+                <Type>Primary</Type>
+                <Extend>true</Extend>
+              </CreatePartition>
+            </CreatePartitions>
+            <ModifyPartitions>
+              <ModifyPartition wcm:action="add">
+                <Order>1</Order>
+                <Format>FAT32</Format>
+                <Label>System</Label>
+                <PartitionID>1</PartitionID>
+              </ModifyPartition>
+              <ModifyPartition wcm:action="add">
+                <Order>2</Order>
+                <PartitionID>2</PartitionID>
+              </ModifyPartition>
+              <ModifyPartition wcm:action="add">
+                <Order>3</Order>
+                <Format>NTFS</Format>
+                <Label>Windows</Label>
+                <Letter>C</Letter>
+                <PartitionID>3</PartitionID>
+              </ModifyPartition>
+            </ModifyPartitions>
+            <DiskID>0</DiskID>
+            <WillWipeDisk>true</WillWipeDisk>
+        </Disk>
+      </DiskConfiguration>
+
+      <RunSynchronous>
+        <RunSynchronousCommand wcm:action="add">
+          <Order>1</Order>
+          <Path>reg add HKLM\System\Setup\LabConfig /v BypassTPMCheck /t REG_DWORD /d 1 /f</Path>
+        </RunSynchronousCommand>
+        <RunSynchronousCommand wcm:action="add">
+          <Order>2</Order>
+          <Path>reg add HKLM\System\Setup\LabConfig /v BypassSecureBootCheck /t REG_DWORD /d 1 /f</Path>
+        </RunSynchronousCommand>
+        <RunSynchronousCommand wcm:action="add">
+          <Order>3</Order>
+          <Path>reg add HKLM\SYSTEM\Setup\LabConfig /v BypassRAMCheck /t REG_DWORD /d 1</Path>
+        </RunSynchronousCommand>
+      </RunSynchronous>
+    </component>
+  </settings>
+
+  <settings pass="specialize">
+    <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
+      <ComputerName>WIN11</ComputerName>
+    </component>
+  </settings>
+
+  <settings pass="oobeSystem">
+    <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
+      <InputLocale>en-GB</InputLocale>
+      <SystemLocale>en-GB</SystemLocale>
+      <UILanguage>en-GB</UILanguage>
+      <UserLocale>en-GB</UserLocale>
+    </component>
+    <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
+      <OOBE>
+        <HideEULAPage>true</HideEULAPage>
+        <HideLocalAccountScreen>true</HideLocalAccountScreen>
+        <HideOEMRegistrationScreen>true</HideOEMRegistrationScreen>
+        <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
+        <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
+        <ProtectYourPC>3</ProtectYourPC>
+      </OOBE>
+      <UserAccounts>
+        <LocalAccounts>
+          <LocalAccount wcm:action="add">
+            <Password>
+              <Value>MyStr0ng!Pass</Value>
+              <PlainText>true</PlainText>
+            </Password>
+            <Description>Lab Admin</Description>
+            <DisplayName>Administrator</DisplayName>
+            <Group>Administrators</Group>
+            <Name>Administrator</Name>
+          </LocalAccount>
+        </LocalAccounts>
+      </UserAccounts>
+      <AutoLogon>
+        <Password><Value>MyStr0ng!Pass</Value><PlainText>true</PlainText></Password>
+        <Enabled>true</Enabled>
+        <LogonCount>3</LogonCount>
+        <Username>Administrator</Username>
+      </AutoLogon>
+      <FirstLogonCommands>
+         <SynchronousCommand wcm:action="add">
+          <CommandLine>powershell -c "Get-NetConnectionProfile | Where-Object {$_.NetworkCategory -ne 'DomainAuthenticated'} | Set-NetConnectionProfile -NetworkCategory Private"</CommandLine>
+          <Order>1</Order>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+          <CommandLine>reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OOBE /v BypassNRO /t REG_DWORD /d 1 /f</CommandLine>
+          <Order>2</Order>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+          <CommandLine>cmd.exe /c winrm quickconfig -q</CommandLine>
+          <Order>3</Order>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+          <CommandLine>cmd.exe /c winrm set winrm/config/service @{AllowUnencrypted="true"}</CommandLine>
+          <Order>4</Order>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+          <CommandLine>cmd.exe /c winrm set winrm/config/service/auth @{Basic="true"}</CommandLine>
+          <Order>5</Order>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+          <CommandLine>cmd.exe /c netsh advfirewall set allprofiles state off</CommandLine>
+          <Order>6</Order>
+        </SynchronousCommand>
+      </FirstLogonCommands>
+    </component>
+  </settings>
+</unattend>
