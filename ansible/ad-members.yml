@@ -19,10 +19,12 @@
   hosts: workstation
   roles:
     - { role: 'commonwkstn', tags: 'workstation'}
+    - { role: 'settings/hostname', tags: 'hostname' }
   vars:
     member_domain: "{{lab.hosts[dict_key].domain}}"
     domain_username: "{{admin_user}}@{{member_domain}}"
     domain_password: "{{lab.domains[member_domain].domain_password}}"
+    hostname: "{{lab.hosts[dict_key].hostname}}"
 
 - name: "play linux servers AD configuration"
   hosts: linux_server
