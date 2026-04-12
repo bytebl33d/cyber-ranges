@@ -21,7 +21,7 @@ ansible_winrm_read_timeout_sec=500
 
 ; LAB SCENARIO CONFIGURATION -----------------------------
 
-; computers inside domain (mandatory)
+; servers inside domain (mandatory)
 ; usage : build.yml, ad-relations.yml, ad-servers.yml, vulnerabilities.yml
 [domain]
 dc01

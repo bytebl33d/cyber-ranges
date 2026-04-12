@@ -29,6 +29,24 @@
                     }
                 }
             }
+        },
+        "ws01":{
+            "hostname":"ws01",
+            "type":"workstation",
+            "local_admin_password": "MyStr0ng!Pass",
+            "domain":"example.lab",
+            "use_laps": false,
+            "path" : "DC=example,DC=lab",
+            "vulns":[
+               "administrator_folder",
+               "files"
+            ],
+            "vulns_vars":{
+               "flag":{
+                  "src" : "flags/user.txt",
+                  "dest": "c:\\Users\\Administrator\\Desktop\\user.txt"
+               }
+            }
         }
     },
     "domains" : {

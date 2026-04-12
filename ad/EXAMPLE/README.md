@@ -1,6 +1,6 @@
 # EXAMPLE
 
-This is an example template for creating labs with ansible.
+This is an example template for creating labs with ansible (Domain Controller + Workstation).
 
 ## Ansible Provisioning
 
